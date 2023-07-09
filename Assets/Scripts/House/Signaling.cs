@@ -5,34 +5,46 @@ using UnityEngine;
 public class Signaling : MonoBehaviour
 {
     [SerializeField] private float _maxDelta;
-    private float _maxVolumeValue = 1;
+
+    private Coroutine _changeVolumeCoroutine;
     private AudioSource _audioSource;
-    private bool inCollision;
+
+    public void StartCoroutine(bool isExit)
+    {
+        float volumeValue = isExit ? 0.0f : 1.0f;
+
+        if (_changeVolumeCoroutine != null)
+        {
+            StopChangeVolumeCoroutine();
+        }
+
+        _changeVolumeCoroutine = StartCoroutine(ChangeVolume(volumeValue));
+    }
 
     private void Start()
     {
         _audioSource = GetComponent<AudioSource>();
     }
 
-    private void Update()
+    private IEnumerator ChangeVolume(float volumeValue)
     {
-        if (inCollision)
+        bool isWorking = true;
+
+        while (isWorking)
         {
-            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, _maxVolumeValue, _maxDelta * Time.deltaTime);
-        }
-        else
-        {
-            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, 0, _maxDelta * Time.deltaTime);
+            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, volumeValue, _maxDelta * Time.deltaTime);
+
+            if (_audioSource.volume == volumeValue)
+            {
+                StopChangeVolumeCoroutine();
+            }
+
+            yield return null;
         }
     }
-
-    private void OnTriggerEnter2D(Collider2D collision)
+    
+    private void StopChangeVolumeCoroutine()
     {
-        inCollision = true;
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        inCollision = false;
+        StopCoroutine(_changeVolumeCoroutine);
     }
 }

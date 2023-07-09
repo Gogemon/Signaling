@@ -4,21 +4,24 @@ using UnityEngine;
 
 public class Doorway : MonoBehaviour
 {
+    private const string EntranceDoor = "Entrance";
+    private const string ExitDoor = "Exit";
+
     [HideInInspector] public GameObject Entrance;
     [HideInInspector] public GameObject Exit;
 
-    private void Awake()
+    private Signaling _signaling;
+
+    public void ToggleSignalingState(bool isDoorExit)
     {
-        Entrance = gameObject.transform.Find("Entrance").gameObject;
-        Exit = gameObject.transform.Find("Exit").gameObject;
+        _signaling.StartCoroutine(isDoorExit);
     }
 
-    public void CooldownAllDors()
+    private void Awake()
     {
-        Transition exitTransition = Exit.GetComponent<Transition>();
-        Transition entranceTransition = Entrance.GetComponent<Transition>();
+        Entrance = gameObject.transform.Find(EntranceDoor).gameObject;
+        Exit = gameObject.transform.Find(ExitDoor).gameObject;
 
-        exitTransition.SetCooldown();
-        entranceTransition.SetCooldown();
+        _signaling = GetComponentInChildren<Signaling>();
     }
 }

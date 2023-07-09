@@ -1,39 +1,56 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class Transition : MonoBehaviour
 {
-    [SerializeField] private bool _isDoorInHouse;
-    private GameObject _secondDoor;
+    [SerializeField] private Transition _secondDoor;
+
+    private Coroutine _cooldownCoroutine;
     private Doorway _doorway;
+
     private float _transitionTime;
     private float _transitionTimeCooldown = 1;
+
+    [SerializeField] private bool _isExit;
 
     private void Start()
     {
         var parent = gameObject.transform.parent.gameObject;
         _doorway = parent.GetComponent<Doorway>();
 
-        if (_isDoorInHouse)
-        {
-            _secondDoor = _doorway.Entrance;
-        }
-        else
-        {
-            _secondDoor = _doorway.Exit;
-        }
-    }
+        _secondDoor = _doorway.GetComponentsInChildren<Transition>().FirstOrDefault(transition => transition != this);
 
-    private void Update()
-    {
-        if (_transitionTime > 0)
-            _transitionTime -= Time.deltaTime;
+        _isExit = this.CompareTag("Exit") ? true : false;
     }
 
     public void SetCooldown()
     {
         _transitionTime = _transitionTimeCooldown;
+        _cooldownCoroutine = StartCoroutine(Cooldown());
+    }
+
+    private IEnumerator Cooldown()
+    {
+        bool isCooldownRun = true;
+
+        while (isCooldownRun)
+        {
+            _transitionTime -= Time.deltaTime;
+
+            if (_transitionTime <= 0)
+            {
+                StopCooldownCoroutine();
+            }
+
+            yield return null;
+        }
+    }
+
+    private void StopCooldownCoroutine()
+    {
+        StopCoroutine(_cooldownCoroutine);
     }
 
     private void OnTriggerStay2D(Collider2D collision)
@@ -42,8 +59,12 @@ public class Transition : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.E) && _transitionTime <= 0)
             {
-                _doorway.CooldownAllDors();
-                player.ChengeBackground();
+                _secondDoor.SetCooldown();
+                _doorway.ToggleSignalingState(_isExit);
+
+                BackgroundController backgroundController = player.GetComponent<BackgroundController>();
+                backgroundController.ChengeBackground();
+
                 player.transform.position = _secondDoor.transform.position;
             }
         }

@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private BackgroundCheinger _backgroundCheinger;
-
-    private void Start()
+    // Start is called before the first frame update
+    void Start()
     {
-        _backgroundCheinger = gameObject.transform.Find("Background").gameObject.GetComponent<BackgroundCheinger>();
+        
     }
 
-    public void ChengeBackground()
+    // Update is called once per frame
+    void Update()
     {
-        _backgroundCheinger.ChangeDarkenBackground();
+        
     }
 }

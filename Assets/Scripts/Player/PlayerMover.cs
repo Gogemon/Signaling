@@ -1,5 +1,8 @@
 using UnityEngine;
 
+[RequireComponent(typeof(SpriteRenderer))]
+[RequireComponent(typeof(PlayerAnimationSetter))]
+
 public class PlayerMover : MonoBehaviour
 {
     [SerializeField] private float _speed;

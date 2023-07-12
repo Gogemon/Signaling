@@ -6,7 +6,7 @@ public class BackgroundController : MonoBehaviour
 
     private void Start()
     {
-        _backgroundCheinger = gameObject.transform.Find("Background").gameObject.GetComponent<BackgroundCheinger>();
+        _backgroundCheinger = GetComponentInChildren<BackgroundCheinger>();
     }
 
     public void ChengeBackground()

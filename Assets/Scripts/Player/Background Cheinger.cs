@@ -1,5 +1,7 @@
 using UnityEngine;
 
+[RequireComponent(typeof(SpriteRenderer))]
+
 public class BackgroundCheinger : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer _background;

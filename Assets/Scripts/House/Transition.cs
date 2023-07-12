@@ -4,6 +4,8 @@ using System.Linq;
 
 public class Transition : MonoBehaviour
 {
+    private const string ExitTag = "Exit";
+
     [SerializeField] private Transition _secondDoor;
 
     private Coroutine _cooldownCoroutine;
@@ -21,7 +23,24 @@ public class Transition : MonoBehaviour
 
         _secondDoor = _doorway.GetComponentsInChildren<Transition>().FirstOrDefault(transition => transition != this);
 
-        _isExit = this.CompareTag("Exit") ? true : false;
+        _isExit = this.CompareTag(ExitTag) ? true : false;
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.TryGetComponent<Player>(out Player player))
+        {
+            if (Input.GetKey(KeyCode.E) && _transitionTime <= 0)
+            {
+                _secondDoor.SetCooldown();
+                _doorway.ToggleSignalingState(_isExit);
+
+                BackgroundController backgroundController = player.GetComponent<BackgroundController>();
+                backgroundController.ChengeBackground();
+
+                player.transform.position = _secondDoor.transform.position;
+            }
+        }
     }
 
     public void SetCooldown()
@@ -50,22 +69,5 @@ public class Transition : MonoBehaviour
     private void StopCooldownCoroutine()
     {
         StopCoroutine(_cooldownCoroutine);
-    }
-
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        if (collision.TryGetComponent<Player>(out Player player))
-        {
-            if (Input.GetKey(KeyCode.E) && _transitionTime <= 0)
-            {
-                _secondDoor.SetCooldown();
-                _doorway.ToggleSignalingState(_isExit);
-
-                BackgroundController backgroundController = player.GetComponent<BackgroundController>();
-                backgroundController.ChengeBackground();
-
-                player.transform.position = _secondDoor.transform.position;
-            }
-        }
     }
 }

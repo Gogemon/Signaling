@@ -10,16 +10,16 @@ public class Doorway : MonoBehaviour
 
     private Signaling _signaling;
 
-    public void ToggleSignalingState(bool isDoorExit)
-    {
-        _signaling.StartCoroutine(isDoorExit);
-    }
-
     private void Awake()
     {
         Entrance = gameObject.transform.Find(EntranceDoor).gameObject;
         Exit = gameObject.transform.Find(ExitDoor).gameObject;
 
         _signaling = GetComponentInChildren<Signaling>();
+    }
+
+    public void ToggleSignalingState(bool isDoorExit)
+    {
+        _signaling.StartVolumeChanger(isDoorExit);
     }
 }

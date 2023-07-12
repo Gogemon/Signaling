@@ -1,6 +1,8 @@
 using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
+
 public class Signaling : MonoBehaviour
 {
     [SerializeField] private float _maxDelta;
@@ -8,9 +10,17 @@ public class Signaling : MonoBehaviour
     private Coroutine _changeVolumeCoroutine;
     private AudioSource _audioSource;
 
-    public void StartCoroutine(bool isExit)
+    private float _minVolume = 0;
+    private float _maxVolume = 1;
+
+    private void Start()
     {
-        float volumeValue = isExit ? 0.0f : 1.0f;
+        _audioSource = GetComponent<AudioSource>();
+    }
+
+    public void StartVolumeChanger(bool isExit)
+    {
+        float volumeValue = isExit ? _minVolume : _maxVolume;
 
         if (_changeVolumeCoroutine != null)
         {
@@ -18,11 +28,6 @@ public class Signaling : MonoBehaviour
         }
 
         _changeVolumeCoroutine = StartCoroutine(ChangeVolume(volumeValue));
-    }
-
-    private void Start()
-    {
-        _audioSource = GetComponent<AudioSource>();
     }
 
     private IEnumerator ChangeVolume(float volumeValue)

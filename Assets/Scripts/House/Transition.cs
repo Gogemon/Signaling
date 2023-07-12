@@ -13,8 +13,7 @@ public class Transition : MonoBehaviour
 
     private float _transitionTime;
     private float _transitionTimeCooldown = 1;
-
-    [SerializeField] private bool _isExit;
+    private bool _isExit;
 
     private void Start()
     {
